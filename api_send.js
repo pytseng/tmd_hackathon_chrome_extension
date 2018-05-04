@@ -49,6 +49,6 @@ api_button.onclick = function(element) {
    $('#leader_ship_role')[0]["innerHTML"] = leader_ship_role;
    $('#twit_account')[0]["innerHTML"] = twit_account;
 
-
+	console.log(window.getSelection().toString());
 };
 
