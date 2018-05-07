@@ -42,7 +42,7 @@ function renderBubble(mouseX, mouseY, selection_str) {
   const result = politicians.find( politician => {
   	if(politician.name.toLowerCase() == selection_str) {
   		debugger;
-  		bubbleDOM.innerHTML = "<img src=\"" + politician.img_url +"\" width=\"300px\" height=\"200px\" >";	
+  		bubbleDOM.innerHTML = "<img src=\"" + politician.img_url +"\" width=\"300px\" height=\"180px\" >";	
   	}
   })
 }
