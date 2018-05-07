@@ -38,7 +38,7 @@ function renderBubble(mouseX, mouseY, selection_str) {
   bubbleDOM.style.top = mouseY - 40 + 'px';
   bubbleDOM.style.left = mouseX + 'px';
   bubbleDOM.style.visibility = 'visible';
-  bubbleDOM.innerHTML = "<img src=\"https://github.com/roycboyc/OpenPolitics/blob/master/logo_16.png?raw=true\">";
+  bubbleDOM.innerHTML = "<img src=\"https://raw.githubusercontent.com/pytseng/tmd_hackathon_chrome_extension/master/images/not_found_pill.png\">";
   const result = politicians.find( politician => {
   	if(politician.name.toLowerCase() == selection_str) {
   		debugger;
