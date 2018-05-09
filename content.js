@@ -33,18 +33,47 @@ document.addEventListener('mousedown', function (e) {
 
 // Move that bubble to the appropriate location.
 function renderBubble(mouseX, mouseY, selection_str) {
-
+	$.ajax({ 
+		type : "GET", 
+		url : "https://api.propublica.org/congress/v1/115/senate/members.json", 
+		beforeSend: function(xhr){xhr.setRequestHeader('X-API-Key', 'IzJGY0q3AS4wImC3H3t4vGNLIdMuXC7Jn2CwArlc');},
+		success : function(result) { 
+			var name_match = 0;
+		    result.results[0].members.find( member => {
+			    var member_name = member.first_name + " " + member.last_name;
+			  	if(member_name.toLowerCase() == selection_str) {
+			  		name_match =1;
+			  		for (var prop in member) {
+						bubbleDOM.style.top = mouseY - 40 + 'px';
+			  			bubbleDOM.style.left = mouseX + 'px';
+			  			bubbleDOM.style.visibility = 'visible';		  			
+			  			var textnode = document.createTextNode(prop + ": " + member[prop]); 
+			  			
+			  			bubbleDOM.appendChild(textnode);
+			  		}
+			  	}
+		   })
+			    debugger;
+		    
+			if(name_match = 0) {
+				bubbleDOM.style.top = mouseY - 40 + 'px';
+				bubbleDOM.style.left = mouseX + 'px';
+				bubbleDOM.style.visibility = 'visible';		  		
+				bubbleDOM.innerHTML = "<img src=\"https://raw.githubusercontent.com/pytseng/tmd_hackathon_chrome_extension/master/images/not_found_pill.png\">";
+			}		    
+		}, 
+		error : function(result) { 
+				console.log("an error, you are doomed");
+		} 
+	}); 
   // bubbleDOM.innerHTML = selection_str;
-  bubbleDOM.style.top = mouseY - 40 + 'px';
-  bubbleDOM.style.left = mouseX + 'px';
-  bubbleDOM.style.visibility = 'visible';
-  bubbleDOM.innerHTML = "<img src=\"https://raw.githubusercontent.com/pytseng/tmd_hackathon_chrome_extension/master/images/not_found_pill.png\">";
-  const result = politicians.find( politician => {
-  	if(politician.name.toLowerCase() == selection_str) {
-  		debugger;
-  		bubbleDOM.innerHTML = "<img src=\"" + politician.img_url +"\" width=\"300px\" height=\"180px\" >";	
-  	}
-  })
+  
+  // const result = politicians.find( politician => {
+  // 	if(politician.name.toLowerCase() == selection_str) {
+  // 		debugger;
+  // 		bubbleDOM.innerHTML = "<img src=\"" + politician.img_url +"\" width=\"300px\" height=\"180px\" >";	
+  // 	}
+  // })
 }
 
 // function showImage(){ 
