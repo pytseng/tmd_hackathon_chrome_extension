@@ -12,12 +12,11 @@ document.addEventListener('mouseup', function (e) {
   var Y_pos = window.getSelection().getRangeAt(0).getBoundingClientRect().y+window.pageYOffset
   var selection_str = window.getSelection().toString().toLowerCase();
   if (selection_str.length > 0) {
-
+  	
     renderBubble(X_pos, Y_pos, selection_str);
   }
 }, false);	
 
-// Close the bubble when we click on the screen.
 document.addEventListener('mousedown', function (e) {
   if (bubble_status==0){
   	bubbleDOM.style.visibility = 'hidden';	
@@ -25,40 +24,64 @@ document.addEventListener('mousedown', function (e) {
 
 }, false);
 
-// bubbleDOM.addEventListener('mousedown', function(e) {
-// 	showImage();
+// bubbleDOM.addEventListener('mouseleave', function (e) {
+//   bubble_status = 0;
+//   bubbleDOM.style.visibility = 'hidden';	
 // }, false);
+bubbleDOM.addEventListener('mouseenter', function (e) {
+	bubbleDOM.addEventListener('mouseleave', function (e) {
+		bubbleDOM.style.visibility = 'hidden';
+		bubble_status=0;
+	}, false);
+}, false);
 
 
 
 // Move that bubble to the appropriate location.
 function renderBubble(mouseX, mouseY, selection_str) {
+	bubbleDOM.innerHTML = "";
 	$.ajax({ 
 		type : "GET", 
 		url : "https://api.propublica.org/congress/v1/115/senate/members.json", 
 		beforeSend: function(xhr){xhr.setRequestHeader('X-API-Key', 'IzJGY0q3AS4wImC3H3t4vGNLIdMuXC7Jn2CwArlc');},
 		success : function(result) { 
 			var name_match = 0;
+			bubbleDOM.style.top = mouseY - 40 + 'px';
+  			bubbleDOM.style.left = mouseX + 'px';
+  			bubbleDOM.style.visibility = 'visible';			
 		    result.results[0].members.find( member => {
 			    var member_name = member.first_name + " " + member.last_name;
 			  	if(member_name.toLowerCase() == selection_str) {
-			  		name_match =1;
-			  		for (var prop in member) {
-						bubbleDOM.style.top = mouseY - 40 + 'px';
-			  			bubbleDOM.style.left = mouseX + 'px';
-			  			bubbleDOM.style.visibility = 'visible';		  			
-			  			var textnode = document.createTextNode(prop + ": " + member[prop]); 
-			  			
-			  			bubbleDOM.appendChild(textnode);
-			  		}
+			  		bubble_status =1;
+			  		name_match = 1;
+		  			// var textnode = document.createTextNode(prop + ": " + member[prop]); 
+		  			var name_str = "<li>Name: " + member_name +"</li>";
+		  			var title_str = "<li>Title: " + member["title"] +"</li>";
+					var state_str = "<li>State: " + member["state"] +"</li>";
+					var party_str = "<li>Party: " + member["party"] +"</li>";
+					var votes_with_party_pct_str = "<li>Votes_with_party_pct: " + member["votes_with_party_pct"] +"</li>";
+					var missed_votes = "<li>Missed votes: " + member["missed_votes"] +"</li>";
+					// links
+					var twitter_url = "https://twitter.com/" + member["twitter_account"];
+					var twitter_url_str = "<li><a href=\"" + twitter_url + "\" target=\"_blank\">" + "Twitter account" +"</a></li>";
+					var facebook_url = "https://facebook.com/" + member["twitter_account"];
+					var facebook_url_str = "<li><a href=\"" + facebook_url + "\" target=\"_blank\">" + "Facebook account" +"</a></li>";
+					var contact_form_str = "<li><a href=\"" + member["contact_form"] + "\" target=\"_blank\">" + "Contact form" +"</a></li>";
+					bubbleDOM.innerHTML = name_str + title_str + state_str + party_str + votes_with_party_pct_str + missed_votes + twitter_url_str + facebook_url_str + contact_form_str;
+					// $('.selection_bubble').append("<a href=\"" + twitter_url + "\">"); // put it into the DOM   		  			
+			  		// bubbleDOM.innerHTML("Name: " +member_name);
+			  		// bubbleDOM.innerHTML("<a href=" + member["twitter_account"] + ">Twitter account</a>");
+			  		// bubbleDOM.appendChild()
+			  		// for (var prop in member) {
+			  		// 	var textnode = document.createTextNode(prop + ": " + member[prop]); 
+			  		// 	bubbleDOM.appendChild(textnode);
+			  		// }
 			  	}
-		   })
-			    debugger;
-		    
-			if(name_match = 0) {
-				bubbleDOM.style.top = mouseY - 40 + 'px';
-				bubbleDOM.style.left = mouseX + 'px';
-				bubbleDOM.style.visibility = 'visible';		  		
+		    })
+			bubbleDOM.style.top = mouseY - 40 + 'px';
+  			bubbleDOM.style.left = mouseX + 'px';
+  			bubbleDOM.style.visibility = 'visible';			    
+			if(name_match == 0) {
 				bubbleDOM.innerHTML = "<img src=\"https://raw.githubusercontent.com/pytseng/tmd_hackathon_chrome_extension/master/images/not_found_pill.png\">";
 			}		    
 		}, 
@@ -82,6 +105,8 @@ function renderBubble(mouseX, mouseY, selection_str) {
 // 	bubbleDOM.style.visibility = 'visible';
 // }
 
+
+// for debugging
 var politicians = [
 	{name: "catherine cortez masto", img_url:"https://github.com/roycboyc/OpenPolitics/blob/master/CatherineMasto.png?raw=true"},
 	{name: "chuck schumer", img_url:"https://github.com/roycboyc/OpenPolitics/blob/master/CharlesSchumer.png?raw=true"},
